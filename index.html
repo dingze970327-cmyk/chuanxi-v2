@@ -93,9 +93,7 @@ body{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;background:#f0f7ff;
 .ckl li{font-size:12.5px;color:#e2e8f0;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.07);line-height:1.55}
 /* ===== 手机端底部卡片 ===== */
 .m-sheet{display:none}
-body.detail-open .map-wrap{height:58vh;min-height:280px}
 body.detail-open .m-sheet{display:none!important}
-body.detail-open .detail-panel{top:58vh;bottom:auto;height:42vh;min-height:260px}
 .sheet-handle{display:none;cursor:pointer;touch-action:none}
 @media(max-width:768px){
   .sidebar{display:none!important}
@@ -115,7 +113,7 @@ body.detail-open .detail-panel{top:58vh;bottom:auto;height:42vh;min-height:260px
   .m-tags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
   .m-tag{font-size:9.5px;color:#0369a1;background:#e0f2fe;padding:1px 6px;border-radius:999px}
   .m-warn{font-size:10px;color:#b45309;background:#fef3c7;border-radius:6px;padding:3px 7px;margin-top:4px;line-height:1.45}
-  .detail-panel{top:auto;right:0;left:0;bottom:0;width:100%;height:76vh;border-radius:20px 20px 0 0;animation:sheetUp .35s cubic-bezier(.4,0,.2,1)}
+  .detail-panel{top:38vh;right:0;left:0;bottom:auto;width:100%;height:62vh;border-radius:20px 20px 0 0;animation:sheetUp .35s cubic-bezier(.4,0,.2,1)}
   .detail-panel .sheet-handle{display:block;margin:8px auto 0;flex-shrink:0}
   @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
   .prep-panel{right:10px;left:10px;top:auto;bottom:10px;width:auto;max-height:80vh;border-radius:20px}
