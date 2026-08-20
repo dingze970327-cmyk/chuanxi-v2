@@ -590,7 +590,7 @@ function showDay(d){
   html+='<div class="detail-section"><h3><i class="fa-solid fa-clock" style="color:#f97316"></i> 当日时间线</h3><ul class="tl">'+o.timeline.map(t=>'<li><span class="tl-t">'+t[0]+'</span><span>'+t[1]+'</span></li>').join('')+'</ul></div>';
   html+='<div class="detail-section"><h3><i class="fa-solid fa-location-arrow" style="color:#f97316"></i> 导航途经点</h3>';
   o.wps.forEach((w,i)=>{
-    html+='<div class="wp"><span class="n" style="background:'+COLORS[d]+'">'+(i+1)+'</span><span class="name">'+w.n+'</span><a class="amap" target="_blank" href="'+amapNav(w.la,w.lo,w.n)+'"><i class="fa-solid fa-map-location-dot"></i> 高德</a></div>';
+    html+='<div class="wp"><span class="n" style="background:'+COLORS[d]+'">'+(i+1)+'</span><span class="name">'+w.n+'</span>'+amapAnchor(w)+'</div>';
   });
   html+='</div>';
   if(ATTRS[d]&&ATTRS[d].length){
@@ -616,6 +616,8 @@ function showDay(d){
   }
   b.innerHTML=html;b.scrollTop=0;
 }
+function amapScheme(w){const c=wgs2gcj(w.la,w.lo);const ua=navigator.userAgent;const nm=encodeURIComponent(w.n);if(/iPhone|iPad/i.test(ua))return 'iosamap://navi?sourceApplication=chuanxi&poiname='+nm+'&lat='+c[0]+'&lon='+c[1]+'&dev=0&style=2';if(/Android/i.test(ua))return 'amapuri://route/plan/?dlat='+c[0]+'&dlon='+c[1]+'&dname='+nm+'&dev=0&t=0';return '';}
+function amapAnchor(w){const web=amapNav(w.la,w.lo,w.n);const sch=amapScheme(w);if(!sch)return '<a class="amap" target="_blank" href="'+web+'"><i class="fa-solid fa-map-location-dot"></i> 高德</a>';return '<a class="amap" target="_blank" href="'+web+'" onclick="location.href=\''+sch+'\';var __t=Date.now();setTimeout(function(){if(Date.now()-__t<2600)location.href=\''+web+'\';},2400);return false;"><i class="fa-solid fa-map-location-dot"></i> 高德</a>';}
 function closeDetail(){document.getElementById('detailPanel').style.display='none';document.body.classList.remove('detail-open');if(map)map.invalidateSize();resetMap();}
 function resetMap(){curDay=0;document.body.classList.remove('detail-open');if(map)setTimeout(()=>map.invalidateSize(),80);window.bonusGroup&&window.bonusGroup.clearLayers();layerGroup.eachLayer(l=>{if(l.options.color)l.setStyle({opacity:.8,weight:4});});const all=Object.values(DAYS).flatMap(o=>dayLineOf(o)).concat(STOPS.map(s=>s.p),POIS.map(o=>o.p)).map(p=>P(p[0],p[1]));map.fitBounds(L.latLngBounds(all).pad(0.04));document.getElementById('detailPanel').style.display='none';}
 function buildPrep(){
