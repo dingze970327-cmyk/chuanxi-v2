@@ -566,7 +566,7 @@ function showDay(d){
     document.body.classList.add('detail-open');
     setTimeout(()=>{
       map.invalidateSize();
-      map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[30,46],paddingBottomRight:[0,26]});
+      map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[54,0],paddingBottomRight:[0,0]});
     },80);
   }else{
     map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[24,24],paddingBottomRight:[452,24]});
