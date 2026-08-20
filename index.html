@@ -93,6 +93,9 @@ body{font-family:'Noto Sans SC','Microsoft YaHei',sans-serif;background:#f0f7ff;
 .ckl li{font-size:12.5px;color:#e2e8f0;padding:5px 0;border-bottom:1px dashed rgba(255,255,255,.07);line-height:1.55}
 /* ===== 手机端底部卡片 ===== */
 .m-sheet{display:none}
+body.detail-open .map-wrap{height:58vh;min-height:280px}
+body.detail-open .m-sheet{display:none!important}
+body.detail-open .detail-panel{top:58vh;bottom:auto;height:42vh;min-height:260px}
 .sheet-handle{display:none;cursor:pointer;touch-action:none}
 @media(max-width:768px){
   .sidebar{display:none!important}
@@ -560,8 +563,11 @@ function showDay(d){
   const pts=dayLineOf(o).map(p=>P(p[0],p[1]));
   const isM=window.innerWidth<=768;
   if(isM){
-    const H=map.getSize().y;
-    map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[30,44],paddingBottomRight:[0,Math.round(H*0.42)]});
+    document.body.classList.add('detail-open');
+    setTimeout(()=>{
+      map.invalidateSize();
+      map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[30,46],paddingBottomRight:[0,26]});
+    },80);
   }else{
     map.fitBounds(L.latLngBounds(pts),{paddingTopLeft:[24,24],paddingBottomRight:[452,24]});
   }
@@ -610,8 +616,8 @@ function showDay(d){
   }
   b.innerHTML=html;b.scrollTop=0;
 }
-function closeDetail(){document.getElementById('detailPanel').style.display='none';resetMap();}
-function resetMap(){curDay=0;window.bonusGroup&&window.bonusGroup.clearLayers();layerGroup.eachLayer(l=>{if(l.options.color)l.setStyle({opacity:.8,weight:4});});const all=Object.values(DAYS).flatMap(o=>dayLineOf(o)).concat(STOPS.map(s=>s.p),POIS.map(o=>o.p)).map(p=>P(p[0],p[1]));map.fitBounds(L.latLngBounds(all).pad(0.04));document.getElementById('detailPanel').style.display='none';}
+function closeDetail(){document.getElementById('detailPanel').style.display='none';document.body.classList.remove('detail-open');if(map)map.invalidateSize();resetMap();}
+function resetMap(){curDay=0;document.body.classList.remove('detail-open');if(map)setTimeout(()=>map.invalidateSize(),80);window.bonusGroup&&window.bonusGroup.clearLayers();layerGroup.eachLayer(l=>{if(l.options.color)l.setStyle({opacity:.8,weight:4});});const all=Object.values(DAYS).flatMap(o=>dayLineOf(o)).concat(STOPS.map(s=>s.p),POIS.map(o=>o.p)).map(p=>P(p[0],p[1]));map.fitBounds(L.latLngBounds(all).pad(0.04));document.getElementById('detailPanel').style.display='none';}
 function buildPrep(){
   const p=document.getElementById('prepPanel');
   let h='<h2><i class="fa-solid fa-suitcase-medical" style="color:#22c55e"></i> 行前准备</h2><div class="psub">小红书装备清单高频项 + 行程硬需求</div>';
