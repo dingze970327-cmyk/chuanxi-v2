@@ -119,14 +119,6 @@ body.detail-open .m-sheet{display:none!important}
   .prep-panel{right:10px;left:10px;top:64px;bottom:10px;width:auto;border-radius:20px}
 }
 @media(max-width:390px){.topbar h1{font-size:14px}}
-
-.stay-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.07);font-size:12px;}
-.stay-item a{color:#7dd3fc;text-decoration:none;word-break:break-all;}
-.del{color:#f87171;cursor:pointer;font-weight:700;padding:2px 6px;}
-.addrow{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
-.addrow input{flex:1;min-width:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:6px 8px;font-size:12px;color:#e2e8f0;font-family:inherit;}
-.addbtn{background:#3b82f6;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
-.ckdel{color:#f87171;cursor:pointer;margin-left:auto;font-weight:700;padding:0 4px;}
 </style>
 </head>
 <body>
@@ -623,65 +615,22 @@ function showDay(d){
   if(WARN[d]&&WARN[d].length){
     html+='<div class="detail-section"><h3><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b"></i> 注意事项（小红书避坑）</h3><ul class="warnlist">'+WARN[d].map(w=>'<li>'+w+'</li>').join('')+'</ul></div>';
   }
-  html+='<div class="detail-section"><h3><i class="fa-solid fa-hotel" style="color:#7dd3fc"></i> 住宿链接（可添加/删除 · 存本机浏览器）</h3><div id="staybox-'+d+'"></div></div>';
   if(o.tips&&o.tips.length){
     html+='<div class="detail-section"><h3><i class="fa-solid fa-lightbulb" style="color:#f97316"></i> 当日贴士</h3><div class="tipbox">'+o.tips.map(t=>'• '+t).join('<br>')+'</div></div>';
   }
   b.innerHTML=html;b.scrollTop=0;
-  renderStays(d);
 }
 function amapScheme(w){const c=wgs2gcj(w.la,w.lo);const ua=navigator.userAgent;const nm=encodeURIComponent(w.n);if(/iPhone|iPad/i.test(ua))return 'iosamap://navi?sourceApplication=chuanxi&poiname='+nm+'&lat='+c[0]+'&lon='+c[1]+'&dev=0&style=2';if(/Android/i.test(ua))return 'amapuri://route/plan/?dlat='+c[0]+'&dlon='+c[1]+'&dname='+nm+'&dev=0&t=0';return '';}
 function amapAnchor(w){const web=amapNav(w.la,w.lo,w.n);const sch=amapScheme(w);if(!sch)return '<a class="amap" target="_blank" href="'+web+'"><i class="fa-solid fa-map-location-dot"></i> 高德</a>';return '<a class="amap" target="_blank" href="'+web+'" onclick="location.href=\''+sch+'\';var __t=Date.now();setTimeout(function(){if(Date.now()-__t<2600)location.href=\''+web+'\';},2400);return false;"><i class="fa-solid fa-map-location-dot"></i> 高德</a>';}
-
-function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return[]}}
-function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
-function renderStays(d){
-  const box=document.getElementById('staybox-'+d);if(!box)return;
-  const list=lsGet('stay_d'+d);
-  let h=list.map((s,i)=>'<div class="stay-item"><a href="'+s.url+'" target="_blank">🏨 '+s.name+'</a><span class="del" onclick="delStay('+d+','+i+')">✕</span></div>').join('');
-  if(!list.length)h='<div style="font-size:11px;color:#64748b">还没有添加住宿链接（保存在本机浏览器）</div>';
-  box.innerHTML=h+'<div class="addrow"><input id="sn-'+d+'" placeholder="酒店/民宿名"><input id="su-'+d+'" placeholder="链接 https://..."><button class="addbtn" onclick="addStay('+d+')">＋添加</button></div>';
-}
-function addStay(d){
-  const n=document.getElementById('sn-'+d).value.trim();
-  const u=document.getElementById('su-'+d).value.trim();
-  if(!n||!u)return;
-  const l=lsGet('stay_d'+d);l.push({name:n,url:u});lsSet('stay_d'+d,l);renderStays(d);
-}
-function delStay(d,i){const l=lsGet('stay_d'+d);l.splice(i,1);lsSet('stay_d'+d,l);renderStays(d);}
-function renderPrepEditable(){
-  const wrap=document.getElementById('prepInner');if(!wrap)return;
-  const rem=lsGet('prep_removed'),ext=lsGet('prep_extra');
-  let h='';
-  PREP.forEach(p=>{
-    const items=p.items.filter(i=>rem.indexOf(i)<0);
-    if(!items.length)return;
-    h+='<div class="prep-cat"><h3>'+p.n+'</h3><ul>'+items.map(i=>'<li style="display:flex">'+i+'<span class="ckdel" onclick="delPrepItem(\''+i.replace(/'/g,'')+'\')">✕</span></li>').join('')+'</ul></div>';
-  });
-  h+='<div class="prep-cat"><h3>📝 我的补充</h3><ul>'+(ext.map((i,k)=>'<li style="display:flex">'+i+'<span class="ckdel" onclick="delPrepExtra('+k+')">✕</span></li>').join('')||'')+'</ul><div class="addrow"><input id="pe-input" placeholder="补充一项，如：充电宝×2"><button class="addbtn" onclick="addPrepExtra()">＋添加</button></div></div>';
-  wrap.innerHTML=h;
-}
-function delPrepItem(t){const rem=lsGet('prep_removed');rem.push(t);lsSet('prep_removed',rem);renderPrepEditable();}
-function addPrepExtra(){const i=document.getElementById('pe-input').value.trim();if(!i)return;const e=lsGet('prep_extra');e.push(i);lsSet('prep_extra',e);renderPrepEditable();}
-function delPrepExtra(k){const e=lsGet('prep_extra');e.splice(k,1);lsSet('prep_extra',e);renderPrepEditable();}
-function renderCKEditable(){
-  const box=document.getElementById('ckInner');if(!box)return;
-  const rem=lsGet('ck_removed'),ext=lsGet('ck_extra');
-  const items=CHECKLIST.filter(c=>rem.indexOf(c)<0).concat(ext);
-  box.innerHTML=items.map(c=>'<li style="display:flex">'+c+'<span class="ckdel" onclick="delCKItem(\''+c.replace(/'/g,'')+'\')">✕</span></li>').join('')+
-    '<li><div class="addrow"><input id="ck-input" placeholder="添加一项待办"><button class="addbtn" onclick="addCK()">＋添加</button></div></li>';
-}
-function delCKItem(t){const rem=lsGet('ck_removed');rem.push(t);lsSet('ck_removed',rem);renderCKEditable();}
-function addCK(){const i=document.getElementById('ck-input').value.trim();if(!i)return;const e=lsGet('ck_extra');e.push(i);lsSet('ck_extra',e);renderCKEditable();}
 
 function closeDetail(){document.getElementById('detailPanel').style.display='none';document.body.classList.remove('detail-open');if(map)map.invalidateSize();resetMap();}
 function resetMap(){curDay=0;document.body.classList.remove('detail-open');if(map)setTimeout(()=>map.invalidateSize(),80);window.bonusGroup&&window.bonusGroup.clearLayers();layerGroup.eachLayer(l=>{if(l.options.color)l.setStyle({opacity:.8,weight:4});});const all=Object.values(DAYS).flatMap(o=>dayLineOf(o)).concat(STOPS.map(s=>s.p),POIS.map(o=>o.p)).map(p=>P(p[0],p[1]));map.fitBounds(L.latLngBounds(all).pad(0.04));document.getElementById('detailPanel').style.display='none';}
 function buildPrep(){
   const p=document.getElementById('prepPanel');
-  let h='<h2><i class="fa-solid fa-suitcase-medical" style="color:#22c55e"></i> 行前准备</h2><div class="psub">小红书装备清单高频项 + 行程硬需求（可增删，存本机浏览器）</div><div id="prepInner"></div>';
-  h+='<h3 style="font-size:13px;color:#93c5fd;margin:8px 0 6px"><i class="fa-solid fa-list-check"></i> 现在就要办（按紧急度）</h3><ul class="ckl" id="ckInner"></ul>';
+  let h='<h2><i class="fa-solid fa-suitcase-medical" style="color:#22c55e"></i> 行前准备</h2><div class="psub">小红书装备清单高频项 + 行程硬需求</div>';
+  PREP.forEach(c=>{h+='<div class="prep-cat"><h3>'+c.n+'</h3><ul>'+c.items.map(i=>'<li>'+i+'</li>').join('')+'</ul></div>';});
+  h+='<h3 style="font-size:13px;color:#93c5fd;margin:8px 0 6px"><i class="fa-solid fa-list-check"></i> 现在就要办（按紧急度）</h3><ul class="ckl">'+CHECKLIST.map(c=>'<li>'+c+'</li>').join('')+'</ul>';
   p.innerHTML=h;
-  renderPrepEditable();renderCKEditable();
 }
 function togglePrep(){const p=document.getElementById('prepPanel');p.style.display=p.style.display==='block'?'none':'block';}
 (function(){
