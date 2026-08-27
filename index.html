@@ -633,7 +633,7 @@ function resetMap(){curDay=0;document.body.classList.remove('detail-open');if(ma
 function buildPrep(){
   const p=document.getElementById('prepPanel');
   let h='<h2><i class="fa-solid fa-suitcase-medical" style="color:#22c55e"></i> 行前准备</h2><div class="psub">小红书装备清单高频项 + 行程硬需求</div>';
-  h+='<div class="prep-cat"><h3>💰 共同记账（小算账小程序）</h3><div style="font-size:12px;color:#cbd5e1;line-height:1.7">微信搜索「小算账」，或复制口令到任意微信聊天点击打开：</div><div class="mpcode">#小程序://小算账/3CALtkKPBlpenef</div><button class="addbtn" onclick="copyMP()">📋 复制口令</button></div>';
+  h+='<div class="prep-cat"><h3>💰 共同记账（小算账小程序）</h3><div style="font-size:12px;color:#cbd5e1;line-height:1.7">网页无法直接跳转小程序，正确打开方式：①点按钮复制口令 → ②微信里粘贴发送到任意聊天 → ③点击口令进入</div><div class="mpcode">#小程序://小算账/3CALtkKPBlpenef</div><button class="addbtn" onclick="copyMP()">📋 复制口令</button></div>';
   PREP.forEach(c=>{h+='<div class="prep-cat"><h3>'+c.n+'</h3><ul>'+c.items.map(i=>'<li>'+i+'</li>').join('')+'</ul></div>';});
   h+='<h3 style="font-size:13px;color:#93c5fd;margin:8px 0 6px"><i class="fa-solid fa-list-check"></i> 现在就要办（按紧急度）</h3><ul class="ckl">'+CHECKLIST.map(c=>'<li>'+c+'</li>').join('')+'</ul>';
   p.innerHTML=h;
